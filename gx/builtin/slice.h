@@ -12,13 +12,13 @@ namespace gx {
 // slice ...
 template <typename T = byte>
 struct slice {
-    int beg_{0}, end_{0};
+    int beg_{0}, len_{0};
     VecRef<T> vec_{nullptr};
 
-    slice(const void* p = nil){};
-    slice(const slice& r) : beg_(r.beg_), end_(r.end_), vec_(r.vec_) {}
-    slice(slice&& r) : beg_(r.beg_), end_(r.end_), vec_(r.vec_) { r._reset(); }
-    explicit slice(int len, int cap = 0) : end_(len), vec_(NewRef<Vec<T>>(len)) {
+    slice(const void* p = nil){}; // for x = nil
+    slice(const slice& r) : beg_(r.beg_), len_(r.len_), vec_(r.vec_) {}
+    slice(slice&& r) : beg_(r.beg_), len_(r.len_), vec_(r.vec_) { r._reset(); }
+    explicit slice(int len, int cap = 0) : len_(len), vec_(NewRef<Vec<T>>(len)) {
         if (cap > len) {
             vec_->reserve(cap);
         }
@@ -27,7 +27,7 @@ struct slice {
         for (const auto& e : x) {
             vec_->emplace_back(e);
         }
-        end_ += x.size();
+        len_ += x.size();
     }
 
     // template <typename X, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
@@ -43,11 +43,11 @@ struct slice {
     // Sub ...
     slice Sub(int beg, int end = -1) const {
         slice r;
-        int begt = beg < 0 ? beg_ : (beg_ + beg);
-        int endt = end < 0 ? end_ : (beg_ + end);
-        if (begt <= endt && endt <= end_) {
+        int begt = beg_ + (beg < 0 ? 0 : beg);
+        int lent = beg_ + (end < 0 ? len_ : end) - begt;
+        if (lent >= 0 && begt <= (beg_ + len_) && (begt + lent) <= (beg_ + len_)) {
             r.beg_ = begt;
-            r.end_ = endt;
+            r.len_ = lent;
             r.vec_ = vec_;
         }
         return r;
@@ -72,38 +72,31 @@ struct slice {
     // bool() ...
     operator bool() const { return !!vec_; }
 
-    // x == nil or x != nil
+    // for x == nil or x != nil
     bool operator==(const void* p) const { return p == nil && !!vec_; }
     bool operator!=(const void* p) const { return p == nil && vec_; }
 
-    // size/length ...
-    int size() const { return vec_ ? end_ - beg_ : 0; }
-    int length() const { return size(); }
-
     // data ...
-    T* data() { return vec_ ? vec_->data() + beg_ : 0; }
-    const T* data() const { return vec_ ? vec_->data() + beg_ : 0; }
+    T* data() { return vec_ ? (vec_->data() + beg_) : 0; }
+    const T* data() const { return vec_ ? (vec_->data() + beg_) : 0; }
 
     // T*() ...
     operator T*() { return data(); }
     operator const T*() const { return data(); }
 
     // string ...
-    operator string() { return string((char*)data(), size()); }
-    operator string() const { return string((char*)data(), size()); }
-
-    int len() const { return size(); }
-    int cap() const { return vec_ ? vec_->capcity() : 0; }
+    operator string() { return string((char*)data(), len_ * sizeof(T)); }
+    operator string() const { return string((char*)data(), len_ * sizeof(T)); }
 
     // String ...
     string String() const {
-        if (!operator bool() || beg_ == end_) {
+        if (!operator bool() || len_ <= 0) {
             return "[]";
         }
 
         std::ostringstream ss;
         ss << "[";
-        for (int i = beg_; i < end_; i++) {
+        for (int i = beg_; i < (beg_ + len_); i++) {
             if (i != beg_) {
                 ss << " ";
             }
@@ -126,7 +119,7 @@ struct slice {
     void assign(const slice& r) {
         vec_ = r.vec_;
         beg_ = r.beg_;
-        end_ = r.end_;
+        len_ = r.len_;
     }
 
     // assign ...
@@ -134,28 +127,28 @@ struct slice {
         _create_if_null(len);
         vec_->insert(vec_->begin(), p, p + len);
         beg_ = 0;
-        end_ = len;
+        len_ = len;
     }
 
     // _reset ...
     void _reset() {
         vec_ = nullptr;
         beg_ = 0;
-        end_ = 0;
+        len_ = 0;
     }
 
    public:
     using iterator = typename Vec<T>::iterator;
 
-    iterator begin() { return vec_ ? vec_->begin() + beg_ : null().begin(); }
-    iterator end() { return vec_ ? vec_->begin() + end_ : null().end(); }
-    const iterator begin() const { return vec_ ? vec_->begin() + beg_ : null().begin(); }
-    const iterator end() const { return vec_ ? vec_->begin() + end_ : null().end(); }
+    iterator begin() { return vec_ ? vec_->begin() + beg_ : _nil().begin(); }
+    iterator end() { return vec_ ? vec_->begin() + beg_ + len_ : _nil().end(); }
+    const iterator begin() const { return vec_ ? vec_->begin() + beg_ : _nil().begin(); }
+    const iterator end() const { return vec_ ? vec_->begin() + beg_ + len_ : _nil().end(); }
 
    private:
-    static Vec<T>& null() {
-        static Vec<T> _null;
-        return _null;
+    static Vec<T>& _nil() {
+        static Vec<T> v;
+        return v;
     }
 };
 
@@ -178,13 +171,13 @@ template <typename T = byte, typename V = byte, typename... X>
 void append(slice<T>& dst, V&& v, X&&... x) {
     // std::cout << "slice::append(v)" << std::endl;
     auto& vec = dst.vec_;
-    auto it = vec->begin() + dst.end_;
+    auto it = vec->begin() + dst.beg_ + dst.len_;
     if (it < vec->end()) {
         *it = std::forward<V>(v);
     } else {
         vec->insert(it, std::forward<V>(v));
     }
-    dst.end_++;
+    dst.len_++;
     append(dst, std::forward<X>(x)...);
 }
 
@@ -209,13 +202,13 @@ inline int len(const string& s) { return s.length(); }
 // len ...
 template <typename T = byte>
 int len(const slice<T>& s) {
-    return s.size();
+    return s.len_;
 }
 
 // cap ...
 template <typename T = byte>
 int cap(const slice<T>& s) {
-    return s.vec_ ? (s.vec_->capacity() - s.end_) : 0;
+    return s.vec_ ? (s.vec_->capacity() - s.beg_ - s.len_) : 0;
 }
 
 // append ...
@@ -223,8 +216,8 @@ inline bytez<> append(const bytez<>& dst, const string& src) {
     bytez<> s(dst);
     if (!src.empty()) {
         s._create_if_null();
-        s.vec_->insert(s.vec_->begin() + s.end_, src.begin(), src.end());
-        s.end_ += len(src);
+        s.vec_->insert(s.vec_->begin() + s.beg_ + s.len_, src.begin(), src.end());
+        s.len_ += len(src);
     }
     return s;
 }
@@ -236,9 +229,9 @@ slice<T> append(const slice<T>& dst, const slice<T>& src) {
     if (len(src) > 0) {
         s._create_if_null();
         for (int i = 0; i < len(src); i++) {
-            s.vec_->insert(s.vec_->begin() + s.end_ + i, src[i]);
+            s.vec_->insert(s.vec_->begin() + s.beg_ + s.len_ + i, src[i]);
         }
-        s.end_ += len(src);
+        s.len_ += len(src);
     }
     return s;
 }

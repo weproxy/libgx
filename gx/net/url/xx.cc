@@ -139,7 +139,7 @@ string escape(const string& s, encoding mode) {
         return t;
     }
 
-    int required = s.length() + 2 * hexCount;
+    int required = len(s) + 2 * hexCount;
 
     string t;
     t.reserve(required + 1);
@@ -168,11 +168,11 @@ R<string, error> unescape(const string& ss, encoding mode) {
 
     int n = 0;
     bool hasPlus = false;
-    for (int i = 0; i < s.length();) {
+    for (int i = 0; i < len(s);) {
         switch (s[i]) {
             case '%':
                 n++;
-                if (i + 2 >= s.length() || !ishex(s[i + 1]) || !ishex(s[i + 2])) {
+                if (i + 2 >= len(s) || !ishex(s[i + 1]) || !ishex(s[i + 2])) {
                     return {"", EscapeError(s.substr(i, i + 3))};
                 }
                 if (mode == encodeHost && unhex(s[i + 1]) < 8 && memcmp(s.c_str() + i, "%25", 3) != 0) {
@@ -204,8 +204,8 @@ R<string, error> unescape(const string& ss, encoding mode) {
     }
 
     string t;
-    t.reserve(s.length() - 2 * n);
-    for (int i = 0; i < s.length(); i++) {
+    t.reserve(len(s) - 2 * n);
+    for (int i = 0; i < len(s); i++) {
         switch (s[i]) {
             case '%':
                 t += (char)(unhex(s[i + 1]) << 4 | unhex(s[i + 2]));
@@ -329,8 +329,7 @@ bool validOptionalPort(const string& port) {
         return false;
     }
 
-    for (int i = 1; i < port.length(); i++) {
-        char b = port[i];
+    for (char b : port) {
         if (b < '0' || b > '9') {
             return false;
         }

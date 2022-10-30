@@ -268,8 +268,7 @@ string Values::Encode() const {
     for (auto k : keys) {
         auto& vs = map_[k];
         auto keyEscaped = QueryEscape(k);
-        for (int j = 0; j < len(vs); j++) {
-            auto v = vs[j];
+        for (auto v : vs) {
             if (buf.Len() > 0) {
                 buf.WriteByte('&');
             }

@@ -95,14 +95,14 @@ string EncodeToString(const void* src, size_t srcLen) {
 // DecodeString ...
 R<bytez<>, error> DecodeString(const string& s) {
     const byte* src = (const byte*)s.data();
-    int srcLen = s.size();
+    int srcLen = len(s);
 
     bytez<> r(0, srcLen);
     AUTO_R(dstLen, err, xx::Decode(r.data(), srcLen, src, srcLen));
     if (err) {
         return {{}, err};
     }
-    r.end_ = dstLen;
+    r.len_ = dstLen;
 
     return {r, nil};
 }

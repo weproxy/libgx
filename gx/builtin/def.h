@@ -130,11 +130,18 @@ Box<T> NewBox(Args&&... args) {
 ////////////////////////////////////////////////////////////////////////////////
 //
 namespace gx {
+
+// nil ...
+#define nil nullptr
+
 // string ...
 using string = std::string;
 
 // strvec ...
 using strvec = Vec<string>;
+
+// error ...
+using error = Ref<struct err_t>;
 
 // err_t ...
 struct err_t {
@@ -142,13 +149,9 @@ struct err_t {
     virtual string String() const = 0;
     virtual string Error() const { return String(); }
     operator string() const { return String(); }
+    virtual error Unwrap() const { return nil; }
+    virtual bool Is(const error& target) const { return target && this == target.get(); };
 };
-
-// error ...
-using error = Ref<err_t>;
-
-// nil ...
-#define nil nullptr
 
 // strerr_t ...
 struct strerr_t : public err_t {

@@ -25,8 +25,8 @@ Vec<string> genSplit(const string& s, const string& sep, int sepSave, int n) {
         n = Count(s, sep) + 1;
     }
 
-    if (n > s.length() + 1) {
-        n = s.length() + 1;
+    if (n > len(s) + 1) {
+        n = len(s) + 1;
     }
 
     Vec<string> a(n);
@@ -40,7 +40,7 @@ Vec<string> genSplit(const string& s, const string& sep, int sepSave, int n) {
             break;
         }
         a[i] = t.substr(0, m + sepSave);
-        t = t.substr(m + sep.length());
+        t = t.substr(m + len(sep));
         i++;
     }
     a[i] = t;
@@ -532,8 +532,8 @@ string Join(stringz<> elems, const string& sep) {
     }
 
     int n = len(sep) * (len(elems) - 1);
-    for (int i = 0; i < len(elems); i++) {
-        n += len(elems[i]);
+    for (auto& e : elems) {
+        n += len(e);
     }
 
     Builder b;

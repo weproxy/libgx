@@ -81,7 +81,7 @@ int LastIndex(const bytez<>& s, const bytez<>& sep) {
 // are the same length and contain the same bytes.
 // A nil argument is equivalent to an empty slice.
 bool Equal(const bytez<>& a, const bytez<>& b) {
-    return (&a == &b || (a.len() == b.len() && memcmp(a.data(), b.data(), a.len()) == 0));
+    return (&a == &b || (len(a) == len(b) && memcmp(a.data(), b.data(), len(a)) == 0));
 }
 
 // Compare returns an integer comparing two byte slices lexicographically.
@@ -92,20 +92,20 @@ int Compare(const bytez<>& a, const bytez<>& b) {
         return 0;
     }
 
-    if (a.len() == 0 && b.len() > 0) {
+    if (len(a) == 0 && len(b) > 0) {
         return -1;
-    } else if (a.len() > 0 && b.len() == 0) {
+    } else if (len(a) > 0 && len(b) == 0) {
         return 1;
     }
 
-    int l = a.len() < b.len() ? a.len() : b.len();
+    int l = len(a) < len(b) ? len(a) : len(b);
 
     int r = memcmp(a.data(), b.data(), l);
-    if (r != 0 || a.len() == b.len()) {
+    if (r != 0 || len(a) == len(b)) {
         return r;
     }
 
-    return l == a.len() ? -1 : 1;
+    return l == len(a) ? -1 : 1;
 }
 
 // Count counts the number of non-overlapping instances of sep in s.

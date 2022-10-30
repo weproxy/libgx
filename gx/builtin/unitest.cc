@@ -58,7 +58,7 @@ void test_slice() {
     bytez<> s2 = append(s1, '$', 'b', 'c', 'x', 'y', 'z');
     bytez<> s3 = {4, 5, '6', '&', '8', '9'};
     // bytez<> s3 = {'4'};
-    PRINT_SLICE(s3);
+    // PRINT_SLICE(s3);
     bytez<> s4 = s3(2, 3);
     bytez<> s5 = append(s4, 'e', 'f');
     bytez<> s6 = s5;

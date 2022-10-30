@@ -202,7 +202,7 @@ inline Ref<Buffer> NewBuffer(bytez<> buf) {
 // sufficient to initialize a Buffer.
 inline Ref<Buffer> NewBufferString(const string& s) {
     auto p = NewRef<Buffer>();
-    p->buf.assign((byte*)s.data(), s.length());
+    p->buf.assign((byte*)s.data(), len(s));
     return p;
 }
 

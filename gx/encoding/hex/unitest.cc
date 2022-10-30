@@ -17,7 +17,7 @@ void test_hex() {
     if (err) {
         std::cout << "hex::DecodeString(s1) err: " << err << std::endl;
     } else {
-        std::cout << "hex::DecodeString(s1) =" << string((char*)s2.data(), s2.size()) << std::endl;
+        std::cout << "hex::DecodeString(s1) =" << string(s2) << std::endl;
     }
 }
 }  // namespace unitest
