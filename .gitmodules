@@ -1,15 +1,15 @@
-[submodule "cc/libcc/3rd/coost"]
-	path = cc/libcc/3rd/coost
+[submodule "3rd/coost"]
+	path = 3rd/coost
 	url = https://github.com/idealvin/coost
-[submodule "cc/libcc/3rd/nlohmann_json"]
-	path = cc/libcc/3rd/nlohmann_json
+[submodule "3rd/nlohmann_json"]
+	path = 3rd/nlohmann_json
 	url = https://github.com/nlohmann/json
-[submodule "cc/libcc/3rd/s_task"]
-	path = cc/libcc/3rd/s_task
+[submodule "3rd/s_task"]
+	path = 3rd/s_task
 	url = https://github.com/xhawk18/s_task
-[submodule "cc/libcc/3rd/libgo"]
-	path = cc/libcc/3rd/libgo
+[submodule "3rd/libgo"]
+	path = 3rd/libgo
 	url = https://github.com/yyzybb537/libgo
-[submodule "cc/libcc/3rd/botan"]
-	path = cc/libcc/3rd/botan
+[submodule "3rd/botan"]
+	path = 3rd/botan
 	url = https://github.com/randombit/botan
