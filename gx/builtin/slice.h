@@ -147,15 +147,15 @@ struct slice {
    public:
     using iterator = typename Vec<T>::iterator;
 
-    iterator begin() { return vec_ ? vec_->begin() + beg_ : null_iterator(); }
-    iterator end() { return vec_ ? vec_->begin() + end_ : null_iterator(); }
-    const iterator begin() const { return vec_ ? vec_->begin() + beg_ : null_iterator(); }
-    const iterator end() const { return vec_ ? vec_->begin() + end_ : null_iterator(); }
+    iterator begin() { return vec_ ? vec_->begin() + beg_ : null().begin(); }
+    iterator end() { return vec_ ? vec_->begin() + end_ : null().end(); }
+    const iterator begin() const { return vec_ ? vec_->begin() + beg_ : null().begin(); }
+    const iterator end() const { return vec_ ? vec_->begin() + end_ : null().end(); }
 
    private:
-    static iterator null_iterator() {
+    static Vec<T>& null() {
         static Vec<T> _null;
-        return _null.begin();
+        return _null;
     }
 };
 
