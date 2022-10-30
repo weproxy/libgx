@@ -265,8 +265,7 @@ string Values::Encode() const {
     }
     // sort.Strings(keys)
     // for _, k := range keys {
-    for (int i = 0; i < len(keys); i++) {
-        auto k = keys[i];
+    for (auto k : keys) {
         auto& vs = map_[k];
         auto keyEscaped = QueryEscape(k);
         for (int j = 0; j < len(vs); j++) {

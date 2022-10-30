@@ -404,8 +404,8 @@ struct reader_t {
         bytez<> buf = make(n);
         n = 0;
         // Copy full pieces and fragment in.
-        for (int i = 0; i < len(full); i++) {
-            n += copy(buf(n), full[i]);
+        for (auto c : full) {
+            n += copy(buf(n), c);
         }
         copy(buf(n), frag);
         return {buf, err};

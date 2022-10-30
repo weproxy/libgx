@@ -284,8 +284,8 @@ xx::packResult SOAResource::pack(bytez<> msg, map<string, int> compression, int 
 xx::packResult TXTResource::pack(bytez<> msg, map<string, int> compression, int compressionOff) {
     auto& r = *this;
     auto oldMsg = msg;
-    for (int i = 0; i < len(r.TXT); i++) {
-        AUTO_R(_msg, err, packText(msg, r.TXT[i]));
+    for (auto& c : r.TXT) {
+        AUTO_R(_msg, err, packText(msg, c));
         if (err != nil) {
             return {oldMsg, err};
         }
@@ -322,8 +322,7 @@ xx::packResult AAAAResource::pack(bytez<> msg, map<string, int> compression, int
 
 xx::packResult OPTResource::pack(bytez<> msg, map<string, int> compression, int compressionOff) {
     auto& r = *this;
-    for (int i = 0; i < len(r.Options); ++i) {
-        auto& opt = r.Options[i];
+    for (auto& opt : r.Options) {
         msg = packUint16(msg, opt.Code);
         uint16 l = uint16(len(opt.Data));
         msg = packUint16(msg, l);
@@ -426,29 +425,29 @@ R<bytez<>, error> Message::AppendPack(bytez<> b) {
     // compression will help ensure compliance.
     auto compression = makemap<string, int>();
 
-    for (int i = 0; i < len(m.Questions); i++) {
-        AUTO_R(_msg, _err, m.Questions[i].pack(msg, compression, compressionOff));
+    for (auto& q : m.Questions) {
+        AUTO_R(_msg, _err, q.pack(msg, compression, compressionOff));
         if (_err != nil) {
             return {{}, xx::nestedError("packing Question", _err)};
         }
         msg = _msg;
     }
-    for (int i = 0; i < len(m.Answers); i++) {
-        AUTO_R(_msg, _err, m.Answers[i].pack(msg, compression, compressionOff));
+    for (auto& a : m.Answers) {
+        AUTO_R(_msg, _err, a.pack(msg, compression, compressionOff));
         if (_err != nil) {
             return {{}, xx::nestedError("packing Answer", _err)};
         }
         msg = _msg;
     }
-    for (int i = 0; i < len(m.Authorities); i++) {
-        AUTO_R(_msg, _err, m.Authorities[i].pack(msg, compression, compressionOff));
+    for (auto& a : m.Authorities) {
+        AUTO_R(_msg, _err, a.pack(msg, compression, compressionOff));
         if (_err != nil) {
             return {{}, xx::nestedError("packing Authority", _err)};
         }
         msg = _msg;
     }
-    for (int i = 0; i < len(m.Additionals); i++) {
-        AUTO_R(_msg, _err, m.Additionals[i].pack(msg, compression, compressionOff));
+    for (auto& a : m.Additionals) {
+        AUTO_R(_msg, _err, a.pack(msg, compression, compressionOff));
         if (_err != nil) {
             return {{}, xx::nestedError("packing Additional", _err)};
         }

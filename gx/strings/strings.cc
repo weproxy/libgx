@@ -426,8 +426,7 @@ stringz<> Fields(const string& s) {
     int wasSpace = 1;
     // setBits is used to track which bits are set in the bytes of s.
     uint8 setBits = 0;
-    for (int i = 0; i < len(s); i++) {
-        byte r = s[i];
+    for (byte r : s) {
         setBits |= r;
         int isSpace = int(asciiSpace[r]);
         n += wasSpace & ~isSpace;

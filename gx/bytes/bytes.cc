@@ -113,9 +113,9 @@ int Compare(const bytez<>& a, const bytez<>& b) {
 int Count(const bytez<>& s, const bytez<>& sep) {
     int c = 0;
     const byte *a = s.data(), *b = sep.data();
-    for (int i = 0; i < len(s); i++) {
-        for (int j = 0; j < len(sep); j++) {
-            if (a[i] == b[j]) {
+    for (auto v : s) {
+        for (auto t : sep) {
+            if (v == t) {
                 c++;
                 break;
             }
@@ -186,8 +186,7 @@ struct asciiSet {
 // characters in chars are ASCII.
 R<asciiSet, bool> makeASCIISet(const string& chars) {
     asciiSet as;
-    for (int i = 0; i < len(chars); i++) {
-        byte c = chars[i];
+    for (byte c : chars) {
         if (c >= utf8::RuneSelf) {
             return {as, false};
         }

@@ -115,8 +115,7 @@ bool shouldEscape(byte c, encoding mode) {
 // escape ...
 string escape(const string& s, encoding mode) {
     int spaceCount = 0, hexCount = 0;
-    for (int i = 0; i < s.length(); i++) {
-        char c = s[i];
+    for (char c : s) {
         if (shouldEscape(c, mode)) {
             if (c == ' ' && mode == encodeQueryComponent) {
                 spaceCount++;
@@ -132,9 +131,9 @@ string escape(const string& s, encoding mode) {
 
     if (hexCount == 0) {
         string t(s);
-        for (int i = 0; i < t.length(); i++) {
-            if (t[i] == ' ') {
-                t[i] = '+';
+        for (auto& c : t) {
+            if (c == ' ') {
+                c = '+';
             }
         }
         return t;
@@ -146,8 +145,7 @@ string escape(const string& s, encoding mode) {
     t.reserve(required + 1);
 
     int j = 0;
-    for (int i = 0; i < s.length(); i++) {
-        char c = s[i];
+    for (char c : s) {
         if (c == ' ' && mode == encodeQueryComponent) {
             t[j] = '+';
             j++;
@@ -157,7 +155,7 @@ string escape(const string& s, encoding mode) {
             t[j + 2] = upperhex[c & 15];
             j += 3;
         } else {
-            t[j] = s[i];
+            t[j] = c;
             j++;
         }
     }
@@ -254,13 +252,13 @@ R<string /*scheme*/, string /*path*/, error> getScheme(const string& rawURL) {
 
 // validEncoded ...
 bool validEncoded(const string& s, encoding mode) {
-    for (int i = 0; i < len(s); i++) {
+    for (char c : s) {
         // RFC 3986, Appendix A.
         // pchar = unreserved / pct-encoded / sub-delims / ":" / "@".
         // shouldEscape is not quite compliant with the RFC,
         // so we check the sub-delims ourselves and let
         // shouldEscape handle the others.
-        switch (s[i]) {
+        switch (c) {
             case '!':
             case '$':
             case '&':
@@ -282,7 +280,7 @@ bool validEncoded(const string& s, encoding mode) {
                 // ok - percent encoded, will decode
                 break;
             default:
-                if (shouldEscape(s[i], mode)) {
+                if (shouldEscape(c, mode)) {
                     return false;
                 }
         }
@@ -342,8 +340,7 @@ bool validOptionalPort(const string& port) {
 
 // stringContainsCTLByte ...
 bool stringContainsCTLByte(const string& s) {
-    for (int i = 0; i < len(s); i++) {
-        byte b = s[i];
+    for (byte b : s) {
         if (b < ' ' || b == 0x7f) {
             return true;
         }

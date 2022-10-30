@@ -308,8 +308,8 @@ R<IP, string> parseIPv6Zone(const string& s) {
 // If s is not a valid textual representation of an IP address,
 // ParseIP returns nil.
 IP ParseIP(const string& s) {
-    for (int i = 0; i < len(s); i++) {
-        switch (s[i]) {
+    for (auto c : s) {
+        switch (c) {
             case '.':
                 return xx::parseIPv4(s);
             case ':':
@@ -423,8 +423,8 @@ bool IP::IsGlobalUnicast() const {
 namespace xx {
 // Is p all zeros?
 static bool isZeros(const bytez<>& p) {
-    for (int i = 0; i < len(p); i++) {
-        if (p[i] != 0) {
+    for (auto c : p) {
+        if (c != 0) {
             return false;
         }
     }
@@ -481,8 +481,8 @@ IPMask IP::DefaultMask() const {
 
 namespace xx {
 static bool allFF(const bytez<>& b) {
-    for (int i = 0; i < len(b); i++) {
-        if (b[i] != 0xff) {
+    for (auto c : b) {
+        if (c != 0xff) {
             return false;
         }
     }
