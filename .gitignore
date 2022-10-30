@@ -1,0 +1,12 @@
+#
+# weproxy@foxmail.com 2022/10/03
+#
+
+.vscode/
+.DS_Store
+
+build/
+.xmake/
+
+tmp/
+logs/
