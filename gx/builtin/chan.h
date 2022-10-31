@@ -120,11 +120,3 @@ chan<T> makechan(size_t N = 1) {
 }
 
 }  // namespace gx
-
-////////////////////////////////////////////////////////////////////////////////
-//
-namespace gx {
-namespace unitest {
-void test_chan();
-}  // namespace unitest
-}  // namespace gx

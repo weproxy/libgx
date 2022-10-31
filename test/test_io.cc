@@ -1,11 +1,9 @@
 //
-// weproxy@foxmail.com 2022/10/03
+// weproxy@foxmail.com 2022/10/31
 //
 
-#include "io.h"
-
-namespace gx {
-namespace unitest {
+#include "gx_test.h"
+#include "gx/io/io.h"
 
 // test_io ...
 void test_io() {
@@ -35,5 +33,8 @@ void test_io() {
     }
 }
 
-}  // namespace unitest
-}  // namespace gx
+// main ...
+GXTEST_main(argc, argv) {
+    test_io();
+    return 0;
+}

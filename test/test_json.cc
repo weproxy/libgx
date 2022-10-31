@@ -1,11 +1,9 @@
 //
-// weproxy@foxmail.com 2022/10/03
+// weproxy@foxmail.com 2022/10/31
 //
 
-#include "json.h"
-
-namespace gx {
-namespace unitest {
+#include "gx/encoding/json/json.h"
+#include "gx_test.h"
 
 // auth_t ...
 struct auth_t {
@@ -33,15 +31,17 @@ struct conf_t {
     Vec<rule_t> rules;
 
     // String ...
-    string String() const;
+    string String() const {
+        AUTO_R(str, err, gx::json::Marshal(*this));
+        return err ? "{}" : str;
+    }
     operator string() const { return String(); }
 
-    // ParseJSON ...
-    error ParseJSON(const string& jsonContent);
-
-   private:
-    // Fix ...
-    error Fix();
+    // Parse ...
+    error Parse(const string& js) {
+        // parse
+        return gx::json::Unmarshal(js, this);
+    }
 
    private:
     Vec<rule_t> dnsRules;
@@ -68,16 +68,19 @@ void test_json() {
     r.serv.push_back("default");
     c.rules.push_back(r);
 
-    std::cout << c << std::endl;
+    GX_LOGD("org: " << c);
 
     conf_t cc;
-    auto err = cc.ParseJSON(c);
+    auto err = cc.Parse(c);
     if (err) {
-        std::cout << err << std::endl;
+        GX_LOGE(err);
     } else {
-        std::cout << cc << std::endl;
+        GX_LOGD("dec: " << c);
     }
 }
 
-}  // namespace unitest
-}  // namespace gx
+// main ...
+GXTEST_main(argc, argv) {
+    test_json();
+    return 0;
+}

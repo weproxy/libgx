@@ -74,9 +74,3 @@ inline J Get(const J& j, const string& k) {
 
 }  // namespace json
 }  // namespace gx
-
-namespace gx {
-namespace unitest {
-void test_json();
-}  // namespace unitest
-}  // namespace gx

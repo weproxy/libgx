@@ -207,9 +207,3 @@ string Join(stringz<> elems, const string& sep);
 
 }  // namespace strings
 }  // namespace gx
-
-namespace gx {
-namespace unitest {
-void test_strings();
-}  // namespace unitest
-}  // namespace gx

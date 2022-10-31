@@ -19,9 +19,3 @@ R<bytez<>, error> DecodeString(const string& s);
 
 }  // namespace hex
 }  // namespace gx
-
-namespace gx {
-namespace unitest {
-void test_hex();
-}  // namespace unitest
-}  // namespace gx

@@ -213,9 +213,3 @@ extern Ref<xx::discard_t> Discard;
 
 }  // namespace io
 }  // namespace gx
-
-namespace gx {
-namespace unitest {
-void test_io();
-}  // namespace unitest
-}  // namespace gx

@@ -10,3 +10,5 @@ build/
 
 tmp/
 logs/
+
+/include/co

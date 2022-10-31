@@ -99,4 +99,3 @@ R<int, string, error> foo(const CallbackFn& fn)  {
     return {1, "b", errors::New("err")};
 }
 ```
-

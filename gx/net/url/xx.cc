@@ -329,7 +329,8 @@ bool validOptionalPort(const string& port) {
         return false;
     }
 
-    for (char b : port) {
+    for (int i = 1; i < len(port); i++) {
+        byte b = port[i];
         if (b < '0' || b > '9') {
             return false;
         }

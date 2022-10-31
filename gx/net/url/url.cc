@@ -282,25 +282,3 @@ string Values::Encode() const {
 
 }  // namespace url
 }  // namespace gx
-
-namespace gx {
-namespace unitest {
-
-#ifndef LOGS_D
-#define LOGS_D(...) std::cout << __VA_ARGS__ << std::endl;
-#endif
-
-void test_net_url() {
-    const char* rawURL = "https://user:pass@host.com:8909/a/b?p1=a&p2=b#1234";
-
-    AUTO_R(uri, err, url::Parse(rawURL));
-    if (err) {
-        LOGS_D("err: " << err);
-        return;
-    }
-
-    LOGS_D("raw: " << rawURL);
-    LOGS_D("uri: " << uri);
-}
-}  // namespace unitest
-}  // namespace gx

@@ -45,11 +45,3 @@ struct Defer final {
 
 // DEFER_ADD ...
 #define DEFER_ADD(d, e) d([&]() { e; })
-
-////////////////////////////////////////////////////////////////////////////////
-//
-namespace gx {
-namespace unitest {
-void test_defer();
-}  // namespace unitest
-}  // namespace gx

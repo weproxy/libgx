@@ -158,9 +158,3 @@ inline R<string, error> PathUnescape(const string& s) { return xx::unescape(s, x
 
 }  // namespace url
 }  // namespace gx
-
-namespace gx {
-namespace unitest {
-void test_net_url();
-}  // namespace unitest
-}  // namespace gx
