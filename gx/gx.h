@@ -24,12 +24,12 @@
 #endif
 
 // _GX_LOG ...
-#define _GX_LOG(tag, color, ...)                                                  \
-    do {                                                                          \
-        std::ostringstream ss;                                                    \
-        ss << _TCLEAN_ _TWEAK_ << __FILE__ << ":" << __LINE__ << " " << _TCLEAN_; \
-        ss << tag << color << __VA_ARGS__ << _TCLEAN_ << std::endl;               \
-        std::cout << ss.str();                                                    \
+#define _GX_LOG(tag, color, ...)                                                    \
+    do {                                                                            \
+        std::ostringstream _ss_;                                                    \
+        _ss_ << _TCLEAN_ _TWEAK_ << __FILE__ << ":" << __LINE__ << " " << _TCLEAN_; \
+        _ss_ << tag << color << __VA_ARGS__ << _TCLEAN_ << std::endl;               \
+        std::cout << _ss_.str();                                                    \
     } while (0)
 
 #define GX_LOGD(...) _GX_LOG("[D] ", _TWHITE_, __VA_ARGS__)
@@ -44,10 +44,10 @@
     int gxfn(int argc, char* argv[]);  \
     int main(int argc, char* argv[]) { \
         int r;                         \
-        sync::WaitGroup wg(1);         \
+        gx::sync::WaitGroup wg(1);     \
         gx::go([&]() {                 \
+            DEFER(wg.Done());          \
             r = gxfn(argc, argv);      \
-            wg.Done();                 \
         });                            \
         wg.Wait();                     \
         return r;                      \

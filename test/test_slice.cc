@@ -4,10 +4,10 @@
 
 #include "gx_test.h"
 
+#define PRINT_SLICE(s) GX_LOGD("len(" #s ")=" << len(s) << ", " #s "=" << s);
+
 // test_slice ...
 void test_slice() {
-#define PRINT_SLICE(s) std::cout << "len(" #s ")=" << len(s) << ", " #s "=" << s << std::endl
-
     byte n1 = '\n', n2 = '\r', n3 = ' ';
     int n4 = -2;
     GX_LOGD("n1=" << n1);
@@ -31,6 +31,12 @@ void test_slice() {
     PRINT_SLICE(s4);
     PRINT_SLICE(s5);
     PRINT_SLICE(s6);
+
+    bytez<> bs("ssss");
+    PRINT_SLICE(bs);
+
+    stringz<> ss = {"aaa", "bbb", "ccc"};
+    PRINT_SLICE(ss);
 }
 
 // main ...

@@ -397,7 +397,7 @@ string Replace(const string& s, const string& olds, const string& news, int n) {
         } else {
             j += Index(s.substr(start), olds);
         }
-        b.WriteString(s.substr(start, j));
+        b.WriteString(s.substr(start, j - start));
         b.WriteString(news);
         start = j + len(olds);
     }
@@ -452,7 +452,7 @@ stringz<> Fields(const string& s) {
             i++;
             continue;
         }
-        a[na] = s.substr(fieldStart, i);
+        a[na] = s.substr(fieldStart, i - fieldStart);
         na++;
         i++;
         // Skip spaces in between fields.
@@ -516,7 +516,7 @@ stringz<> FieldsFunc(const string& s, const func<bool(rune)>& f) {
     // for i, span := range spans {
     for (int i = 0; i < len(spans); i++) {
         auto& span = spans[i];
-        a[i] = s.substr(span.start, span.end);
+        a[i] = s.substr(span.start, span.end - span.start);
     }
 
     return a;

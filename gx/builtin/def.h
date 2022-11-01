@@ -17,9 +17,16 @@
 #include <unordered_set>
 #include <vector>
 
+#include "co/mem.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 namespace gx {
+
+// default_allocator ...
+// TODO: for manage memory
+template <typename T>
+using default_allocator = co::stl_allocator<T>;
 
 // Ref ...
 template <typename T>
@@ -39,7 +46,7 @@ using func = std::function<T>;
 
 // Vec ...
 template <typename T>
-using Vec = std::vector<T>;
+using Vec = std::vector<T, default_allocator<T>>;
 
 // VecRef ...
 template <typename T>
@@ -51,7 +58,7 @@ using VecBox = Box<Vec<T>>;
 
 // Set ...
 template <typename T>
-using Set = std::set<T>;
+using Set = std::set<T, std::less<T>, default_allocator<T>>;
 
 // SetRef ...
 template <typename T>
@@ -63,15 +70,15 @@ using SetBox = Box<Set<T>>;
 
 // HashSet ...
 template <typename T>
-using HashSet = std::unordered_set<T>;
+using HashSet = std::unordered_set<T, std::hash<T>, std::equal_to<T>, default_allocator<T>>;
 
 // MultiSet ...
 template <typename T>
-using MultiSet = std::multiset<T>;
+using MultiSet = std::multiset<T, std::less<T>, default_allocator<T>>;
 
 // List ...
 template <typename T>
-using List = std::list<T>;
+using List = std::list<T, default_allocator<T>>;
 
 // ListRef ...
 template <typename T>

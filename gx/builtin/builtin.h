@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <sstream>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +30,38 @@ typedef int32 rune;
 
 // gx_TodoErr ...
 #define gx_TodoErr() fmt::Errorf("<TODO> %s:%d %s", __FILE__, __LINE__, __FUNCTION__)
+
+////////////////////////////////////////////////////////////////////////////////
+namespace gx {
+// _out_item ...
+inline std::ostream& _out_item(std::ostream& s, unsigned char c) {
+    char b[8];
+    if (' ' <= c && c <= '~') {
+        ::sprintf(b, "'%c'", (char)c);
+    } else if (c == '\n') {
+        ::sprintf(b, "'\\n'");
+    } else if (c == '\r') {
+        ::sprintf(b, "'\\r'");
+    } else if (c == '\t') {
+        ::sprintf(b, "'\\t'");
+    } else {
+        ::sprintf(b, "%d", c);
+    }
+    return s << (const char*)b;
+}
+
+// _out_item ...
+inline std::ostream& _out_item(std::ostream& s, char c) { return _out_item(s, (unsigned char)c); }
+
+// _out_item ...
+inline std::ostream& _out_item(std::ostream& s, const std::string& t) { return s << "\"" << t << "\""; }
+
+// _out ...
+template <typename T>
+std::ostream& _out_item(std::ostream& s, const T& t) {
+    return s << t;
+}
+}  // namespace gx
 
 #include "autor.h"
 #include "chan.h"

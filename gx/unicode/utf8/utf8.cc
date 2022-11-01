@@ -141,7 +141,8 @@ static bytez<> appendRuneNonASCII(const bytez<> p, rune r) {
         }
 
         if (i <= xx::rune3Max) {
-            return append(p, byte(xx::t3 | byte(r >> 12)), byte(xx::tx | byte(r >> 6) & xx::maskx), byte(xx::tx | byte(r) & xx::maskx));
+            return append(p, byte(xx::t3 | byte(r >> 12)), byte(xx::tx | byte(r >> 6) & xx::maskx),
+                          byte(xx::tx | byte(r) & xx::maskx));
         } else {
             return append(p, byte(xx::t4 | byte(r >> 18)), byte(xx::tx | byte(r >> 12) & xx::maskx),
                           byte(xx::tx | byte(r >> 6) & xx::maskx), byte(xx::tx | byte(r) & xx::maskx));
@@ -246,7 +247,7 @@ bool Valid(const bytez<>& p1) {
         // on many platforms. See test/codegen/memcombine.go.
         uint32 first32 = uint32(p[0]) | uint32(p[1]) << 8 | uint32(p[2]) << 16 | uint32(p[3]) << 24;
         uint32 second32 = uint32(p[4]) | uint32(p[5]) << 8 | uint32(p[6]) << 16 | uint32(p[7]) << 24;
-        if ((first32 | (second32) & 0x80808080) != 0) {
+        if ((first32 | (second32)&0x80808080) != 0) {
             // Found a non ASCII byte (>= RuneSelf).
             break;
         }
@@ -293,7 +294,7 @@ bool ValidString(const string& s1) {
         // on many platforms. See test/codegen/memcombine.go.
         uint32 first32 = uint32(s[0]) | uint32(s[1]) << 8 | uint32(s[2]) << 16 | uint32(s[3]) << 24;
         uint32 second32 = uint32(s[4]) | uint32(s[5]) << 8 | uint32(s[6]) << 16 | uint32(s[7]) << 24;
-        if ((first32 | (second32) & 0x80808080) != 0) {
+        if ((first32 | (second32)&0x80808080) != 0) {
             // Found a non ASCII byte (>= RuneSelf).
             break;
         }
@@ -531,7 +532,7 @@ R<rune, int> DecodeLastRuneInString(const string& s) {
     if (start < 0) {
         start = 0;
     }
-    AUTO_R(_r, _size, DecodeRuneInString(s.substr(start, end)));
+    AUTO_R(_r, _size, DecodeRuneInString(s.substr(start, end - start)));
     r = _r;
     size = _size;
     if (start + size != end) {

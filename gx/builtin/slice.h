@@ -13,32 +13,24 @@ namespace gx {
 template <typename T = byte>
 struct slice {
     int beg_{0}, len_{0};
-    VecRef<T> vec_{nullptr};
+    VecRef<T> p_{nullptr};
 
-    slice(const void* p = nil){}; // for x = nil
-    slice(const slice& r) : beg_(r.beg_), len_(r.len_), vec_(r.vec_) {}
-    slice(slice&& r) : beg_(r.beg_), len_(r.len_), vec_(r.vec_) { r._reset(); }
-    explicit slice(int len, int cap = 0) : len_(len), vec_(NewRef<Vec<T>>(len)) {
+    slice(const void* p = nil){};  // for x = nil
+    slice(const slice& r) : beg_(r.beg_), len_(r.len_), p_(r.p_) {}
+    slice(slice&& r) : beg_(r.beg_), len_(r.len_), p_(r.p_) { r._reset(); }
+    explicit slice(int len, int cap = 0) : len_(len), p_(NewRef<Vec<T>>(len)) {
         if (cap > len) {
-            vec_->reserve(cap);
+            p_->reserve(cap);
         }
     }
     slice(std::initializer_list<T> x) : slice(0, x.size()) {
-        for (const auto& e : x) {
-            vec_->emplace_back(e);
-        }
+        p_->insert(p_->begin(), x.begin(), x.end());
         len_ += x.size();
     }
 
-    // template <typename X, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
-    // slice<X>(const string& s) : slice<X>(s.length(), s.length()) {
-    //     memcpy(data(), s.data(), s.length());
-    // }
-    slice(const string& s) : slice(s.length(), s.length()) { memcpy(data(), s.data(), s.length()); }
-
     // operator [i] ...
-    T& operator[](int i) { return vec_->operator[](beg_ + i); }
-    const T& operator[](int i) const { return vec_->operator[](beg_ + i); }
+    T& operator[](int i) { return p_->operator[](beg_ + i); }
+    const T& operator[](int i) const { return p_->operator[](beg_ + i); }
 
     // Sub ...
     slice Sub(int beg, int end = -1) const {
@@ -48,7 +40,7 @@ struct slice {
         if (lent >= 0 && begt <= (beg_ + len_) && (begt + lent) <= (beg_ + len_)) {
             r.beg_ = begt;
             r.len_ = lent;
-            r.vec_ = vec_;
+            r.p_ = p_;
         }
         return r;
     }
@@ -70,24 +62,52 @@ struct slice {
     }
 
     // bool() ...
-    operator bool() const { return !!vec_; }
+    operator bool() const { return !!p_; }
 
     // for x == nil or x != nil
-    bool operator==(const void* p) const { return p == nil && !!vec_; }
-    bool operator!=(const void* p) const { return p == nil && vec_; }
+    bool operator==(const void* p) const { return p == nil && !!p_; }
+    bool operator!=(const void* p) const { return p == nil && p_; }
 
     // data ...
-    T* data() { return vec_ ? (vec_->data() + beg_) : 0; }
-    const T* data() const { return vec_ ? (vec_->data() + beg_) : 0; }
+    T* data() { return p_ ? (p_->data() + beg_) : 0; }
+    const T* data() const { return p_ ? (p_->data() + beg_) : 0; }
 
     // T*() ...
     operator T*() { return data(); }
     operator const T*() const { return data(); }
 
-    // string ...
-    operator string() { return string((char*)data(), len_ * sizeof(T)); }
-    operator string() const { return string((char*)data(), len_ * sizeof(T)); }
+   public:  // for slice<byte> <--> string
+    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    slice<X>(string&& s) : slice<X>(s.length(), s.length() + 1) {
+        memcpy(data(), s.data(), s.length());
+        this->operator[](len_) = 0;
+    }
 
+    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    slice<X>(const string& s) : slice<X>(s.length(), s.length() + 1) {
+        memcpy(data(), s.data(), s.length());
+        this->operator[](len_) = 0;
+    }
+
+    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    slice<X>(const char* s) : slice<X>((s && s[0]) ? strlen(s) : 0, (s && s[0]) ? (strlen(s) + 1) : 1) {
+        if (s && s[0]) {
+            memcpy(data(), s, strlen(s));
+        }
+        this->operator[](len_) = 0;
+    }
+
+    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    operator string() {
+        return string((char*)data(), len_ * sizeof(T));
+    }
+
+    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    operator string() const {
+        return string((char*)data(), len_ * sizeof(T));
+    }
+
+   public:
     // String ...
     string String() const {
         if (!operator bool() || len_ <= 0) {
@@ -100,7 +120,7 @@ struct slice {
             if (i != beg_) {
                 ss << " ";
             }
-            ss << vec_->operator[](i);
+            _out_item(ss, p_->operator[](i));
         }
         ss << "]";
 
@@ -110,14 +130,14 @@ struct slice {
    public:
     // _create_if_null ...
     void _create_if_null(int len = 0) {
-        if (!vec_) {
-            vec_ = NewRef<Vec<T>>(len);
+        if (!p_) {
+            p_ = NewRef<Vec<T>>(len);
         }
     }
 
     // assign ...
     void assign(const slice& r) {
-        vec_ = r.vec_;
+        p_ = r.p_;
         beg_ = r.beg_;
         len_ = r.len_;
     }
@@ -125,14 +145,13 @@ struct slice {
     // assign ...
     void assign(const T* p, int len) {
         _create_if_null(len);
-        vec_->insert(vec_->begin(), p, p + len);
-        beg_ = 0;
-        len_ = len;
+        p_->insert(p_->begin() + beg_, p, p + len);
+        len_ += len;
     }
 
     // _reset ...
     void _reset() {
-        vec_ = nullptr;
+        p_ = nullptr;
         beg_ = 0;
         len_ = 0;
     }
@@ -140,10 +159,10 @@ struct slice {
    public:
     using iterator = typename Vec<T>::iterator;
 
-    iterator begin() { return vec_ ? vec_->begin() + beg_ : _nil().begin(); }
-    iterator end() { return vec_ ? vec_->begin() + beg_ + len_ : _nil().end(); }
-    const iterator begin() const { return vec_ ? vec_->begin() + beg_ : _nil().begin(); }
-    const iterator end() const { return vec_ ? vec_->begin() + beg_ + len_ : _nil().end(); }
+    iterator begin() { return p_ ? p_->begin() + beg_ : _nil().begin(); }
+    iterator end() { return p_ ? p_->begin() + beg_ + len_ : _nil().end(); }
+    const iterator begin() const { return p_ ? p_->begin() + beg_ : _nil().begin(); }
+    const iterator end() const { return p_ ? p_->begin() + beg_ + len_ : _nil().end(); }
 
    private:
     static Vec<T>& _nil() {
@@ -170,7 +189,7 @@ inline void append(slice<T>&) {}
 template <typename T = byte, typename V = byte, typename... X>
 void append(slice<T>& dst, V&& v, X&&... x) {
     // std::cout << "slice::append(v)" << std::endl;
-    auto& vec = dst.vec_;
+    auto& vec = dst.p_;
     auto it = vec->begin() + dst.beg_ + dst.len_;
     if (it < vec->end()) {
         *it = std::forward<V>(v);
@@ -208,7 +227,7 @@ int len(const slice<T>& s) {
 // cap ...
 template <typename T = byte>
 int cap(const slice<T>& s) {
-    return s.vec_ ? (s.vec_->capacity() - s.beg_ - s.len_) : 0;
+    return s.p_ ? (s.p_->capacity() - s.beg_ - s.len_) : 0;
 }
 
 // append ...
@@ -216,7 +235,7 @@ inline bytez<> append(const bytez<>& dst, const string& src) {
     bytez<> s(dst);
     if (!src.empty()) {
         s._create_if_null();
-        s.vec_->insert(s.vec_->begin() + s.beg_ + s.len_, src.begin(), src.end());
+        s.p_->insert(s.p_->begin() + s.beg_ + s.len_, src.begin(), src.end());
         s.len_ += len(src);
     }
     return s;
@@ -229,7 +248,7 @@ slice<T> append(const slice<T>& dst, const slice<T>& src) {
     if (len(src) > 0) {
         s._create_if_null();
         for (int i = 0; i < len(src); i++) {
-            s.vec_->insert(s.vec_->begin() + s.beg_ + s.len_ + i, src[i]);
+            s.p_->insert(s.p_->begin() + s.beg_ + s.len_ + i, src[i]);
         }
         s.len_ += len(src);
     }

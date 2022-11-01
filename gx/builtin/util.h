@@ -20,21 +20,7 @@ string to_string(T t) {
 #endif
 
 // << byte
-inline std::ostream& operator<<(std::ostream& s, unsigned char c) {
-    char b[8];
-    if (' ' <= c && c <= '~') {
-        ::sprintf(b, "'%c'", (char)c);
-    } else if (c == '\n') {
-        ::sprintf(b, "'\\n'");
-    } else if (c == '\r') {
-        ::sprintf(b, "'\\r'");
-    } else if (c == '\t') {
-        ::sprintf(b, "'\\t'");
-    } else {
-        ::sprintf(b, "%d", c);
-    }
-    return s << b;
-};
+inline std::ostream& operator<<(std::ostream& s, unsigned char c) { return gx::_out_item(s, c); }
 
 // << char
 inline std::ostream& operator<<(std::ostream& s, char c) { return operator<<(s, (unsigned char)c); };
@@ -58,11 +44,11 @@ std::ostream& operator<<(std::ostream& s, T t) {
 #define GX_DEC_OSTREAM_PTR(Obj) \
     inline std::ostream& operator<<(std::ostream& out, const Obj obj) { return out << (obj ? obj->String() : "<nil>"); }
 
-#define GX_SS(...)                \
-    [&] {                         \
-        std::ostringstream _s2s_; \
-        _s2s_ << __VA_ARGS__;     \
-        return _s2s_.str();       \
+#define GX_SS(...)               \
+    [&] {                        \
+        std::ostringstream _ss_; \
+        _ss_ << __VA_ARGS__;     \
+        return _ss_.str();       \
     }()
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,35 +57,35 @@ namespace gx {
 // tostr ...
 template <typename... T>
 string tostr(T&&... t) {
-    std::ostringstream ss;
-    xx::out(ss, std::forward<T>(t)...);
-    return ss.str();
+    std::ostringstream _ss_;
+    xx::out(_ss_, std::forward<T>(t)...);
+    return _ss_.str();
 }
 
 // print ...
 template <typename... T>
 void print(T&&... t) {
-    std::ostringstream ss;
-    xx::out(ss, std::forward<T>(t)...);
-    std::cout << ss.str();
+    std::ostringstream _ss_;
+    xx::out(_ss_, std::forward<T>(t)...);
+    std::cout << _ss_.str();
 }
 
 // println ...
 template <typename... T>
 void println(T&&... t) {
-    std::ostringstream ss;
-    xx::out(ss, std::forward<T>(t)...);
-    ss << std::endl;
-    std::cout << ss.str();
+    std::ostringstream _ss_;
+    xx::out(_ss_, std::forward<T>(t)...);
+    _ss_ << std::endl;
+    std::cout << _ss_.str();
 }
 
 // panic ...
 template <typename... T>
 void panic(T&&... t) {
-    std::ostringstream ss;
-    xx::out(ss, std::forward<T>(t)...);
-    std::cout << ss.str();
-    throw(ss);
+    std::ostringstream _ss_;
+    xx::out(_ss_, std::forward<T>(t)...);
+    std::cout << _ss_.str();
+    throw(_ss_);
 }
 
 }  // namespace gx
@@ -115,7 +101,7 @@ std::ostream& operator<<(std::ostream& s, const gx::Vec<T>& t) {
         if (i++) {
             s << ", ";
         }
-        s << c;
+        gx::_out_item(s, c);
     }
     return s << "]";
 }
@@ -133,7 +119,7 @@ std::ostream& operator<<(std::ostream& s, const gx::Set<T>& t) {
         if (i++) {
             s << ", ";
         }
-        s << c;
+        gx::_out_item(s, c);
     }
     return s << "}";
 }
@@ -151,7 +137,7 @@ std::ostream& operator<<(std::ostream& s, const gx::List<T>& t) {
         if (i++) {
             s << ", ";
         }
-        s << c;
+        gx::_out_item(s, c);
     }
     return s << "}";
 }
@@ -169,7 +155,8 @@ std::ostream& operator<<(std::ostream& s, const gx::Map<K, V>& t) {
         if (i++) {
             s << ", ";
         }
-        s << c.first << "=" << c.second;
+        gx::_out_item(s, c.first) << ":";
+        gx::_out_item(s, c.second);
     }
     return s << "}";
 }

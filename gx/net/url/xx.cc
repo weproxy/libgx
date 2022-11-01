@@ -173,15 +173,15 @@ R<string, error> unescape(const string& ss, encoding mode) {
             case '%':
                 n++;
                 if (i + 2 >= len(s) || !ishex(s[i + 1]) || !ishex(s[i + 2])) {
-                    return {"", EscapeError(s.substr(i, i + 3))};
+                    return {"", EscapeError(s.substr(i, 3))};
                 }
                 if (mode == encodeHost && unhex(s[i + 1]) < 8 && memcmp(s.c_str() + i, "%25", 3) != 0) {
-                    return {"", EscapeError(s.substr(i, i + 3))};
+                    return {"", EscapeError(s.substr(i, 3))};
                 }
                 if (mode == encodeZone) {
                     auto v = unhex(s[i + 1]) << 4 | unhex(s[i + 2]);
                     if (memcmp(s.c_str() + i, "%25", 3) != 0 && v != ' ' && shouldEscape(v, encodeHost)) {
-                        return {"", EscapeError(s.substr(i, i + 3))};
+                        return {"", EscapeError(s.substr(i, 3))};
                     }
                 }
                 i += 3;
@@ -192,7 +192,7 @@ R<string, error> unescape(const string& ss, encoding mode) {
                 break;
             default:
                 if ((mode == encodeHost || mode == encodeZone) && byte(s[i]) < 0x80 && shouldEscape(s[i], mode)) {
-                    return {"", InvalidHostError(s.substr(i, i + 1))};
+                    return {"", InvalidHostError(s.substr(i, 1))};
                 }
                 i++;
                 break;
@@ -515,7 +515,7 @@ R<string, error> parseHost(const string& host) {
             if (err != nil) {
                 return {"", err};
             }
-            AUTO_R(host2, er2, unescape(host.substr(zone, i), encodeZone));
+            AUTO_R(host2, er2, unescape(host.substr(zone, i - zone), encodeZone));
             if (er2 != nil) {
                 return {"", er2};
             }
@@ -548,8 +548,8 @@ R<string, string> splitHostPort(const string& hostPort) {
 
     int colon = strings::LastIndexByte(host, ':');
     if (colon != -1 && validOptionalPort(host.substr(colon))) {
-        port = host.substr(colon + 1);
         host = host.substr(0, colon);
+        port = host.substr(colon + 1);
     }
 
     if (strings::HasPrefix(host, "[") && strings::HasSuffix(host, "]")) {

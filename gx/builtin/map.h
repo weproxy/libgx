@@ -10,12 +10,35 @@ namespace gx {
 // map ...
 template <typename K, typename V>
 struct map {
-    MapRef<K, V> p_;
+    using Item = typename Map<K, V>::value_type;
+    MapRef<K, V> p_{nullptr};
 
     // map ...
     // map() : p_(NewRef<Map<K, V>>()) {}
-    map(const void* p = nil){};
+    map(const void* p = nil){};  // for X = nil
     map(MapRef<K, V> p) : p_(p) {}
+    map(const map& r) : p_(r.p_) {}
+    map(map&& r) : p_(r.p_) { r.p_ = nullptr; }
+
+    map(std::initializer_list<Item> x) {
+        p_ = NewRef<Map<K, V>>();
+        for (const auto& e : x) {
+            p_->operator[](e.first) = e.second;
+        }
+    }
+
+    // operator =
+    map& operator=(const map& r) {
+        p_ = r.p_;
+        return *this;
+    }
+
+    // operator =
+    map& operator=(map&& r) {
+        p_ = r.p_;
+        r.p_ = nullptr;
+        return *this;
+    }
 
     // *
     Map<K, V>& operator*() { return *p_; }
@@ -58,6 +81,47 @@ struct map {
     // x == nil or x != nil
     bool operator==(const void* p) const { return p == nil && !!p_; }
     bool operator!=(const void* p) const { return p == nil && p_; }
+
+   public:
+    // String ...
+    string String() const {
+        if (size() == 0) {
+            return "{}";
+        }
+
+        std::ostringstream ss;
+        ss << "{";
+        int i = 0;
+        for (auto& p : *p_) {
+            if (i++) {
+                ss << ", ";
+            }
+            _out_item(ss, p.first) << ":";
+            _out_item(ss, p.second);
+        }
+        ss << "}";
+
+        return ss.str();
+    }
+
+   public:
+    using iterator = typename Map<K, V>::iterator;
+
+    iterator begin() { return p_ ? p_->begin() : _nil().begin(); }
+    iterator end() { return p_ ? p_->begin() : _nil().end(); }
+    const iterator begin() const { return p_ ? p_->begin() : _nil().begin(); }
+    const iterator end() const { return p_ ? p_->begin() : _nil().end(); }
+
+    iterator rbegin() { return p_ ? p_->rbegin() : _nil().rbegin(); }
+    iterator rend() { return p_ ? p_->rbegin() : _nil().rend(); }
+    const iterator rbegin() const { return p_ ? p_->rbegin() : _nil().rbegin(); }
+    const iterator rend() const { return p_ ? p_->rbegin() : _nil().rend(); }
+
+   private:
+    static Map<K, V>& _nil() {
+        static Map<K, V> v;
+        return v;
+    }
 };
 
 // makemap ...

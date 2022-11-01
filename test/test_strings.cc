@@ -2,8 +2,8 @@
 // weproxy@foxmail.com 2022/10/31
 //
 
-#include "gx_test.h"
 #include "gx/strings/strings.h"
+#include "gx_test.h"
 
 void test_strings() {
     string s = " av XX av ";
