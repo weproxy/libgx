@@ -32,7 +32,7 @@ inline void out(std::ostream&) {}
 // out ...
 inline void out(std::ostream& s, int c) {
     char b[32];
-    ::sprintf(b, "%d", c);
+    ::snprintf(b, sizeof(b), "%d", c);
     s << b;
 }
 

@@ -13,7 +13,6 @@ namespace fmt {
 static string format(const char* fmt, va_list& ap) {
     string s;
 
-    // vasprintf 会自动分配，调用者负责释放
     char* ptr = 0;
     int len = vasprintf(&ptr, fmt, ap);
     if (ptr) {

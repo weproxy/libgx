@@ -37,15 +37,15 @@ namespace gx {
 inline std::ostream& _out_item(std::ostream& s, unsigned char c) {
     char b[8];
     if (' ' <= c && c <= '~') {
-        ::sprintf(b, "'%c'", (char)c);
+        ::snprintf(b, sizeof(b), "'%c'", (char)c);
     } else if (c == '\n') {
-        ::sprintf(b, "'\\n'");
+        ::snprintf(b, sizeof(b), "'\\n'");
     } else if (c == '\r') {
-        ::sprintf(b, "'\\r'");
+        ::snprintf(b, sizeof(b), "'\\r'");
     } else if (c == '\t') {
-        ::sprintf(b, "'\\t'");
+        ::snprintf(b, sizeof(b), "'\\t'");
     } else {
-        ::sprintf(b, "%d", c);
+        ::snprintf(b, sizeof(b), "%d", c);
     }
     return s << (const char*)b;
 }
