@@ -754,7 +754,7 @@ struct Builder {
     R<bytez<>, error> Finish() {
         auto& b = *this;
         if (b.section < xx::sectionHeader) {
-            return {nil, ErrNotStarted};
+            return {bytez<>{}, ErrNotStarted};
         }
         b.section = xx::sectionDone;
         // Space for the header was allocated in NewBuilder.

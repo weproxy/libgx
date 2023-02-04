@@ -61,7 +61,9 @@ Time Now() {
     // struct timeval tv;
     // ::gettimeofday(&tv, 0);
     struct timespec t;
+    #ifndef _WIN32
     clock_gettime(CLOCK_MONOTONIC, &t);
+    #endif
     return Time(t);
 }
 

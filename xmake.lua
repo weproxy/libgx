@@ -12,8 +12,13 @@ set_project("gx")
 set_xmakever("2.3.1")
 
 -- set common flags
-set_languages("c++11")
-set_warnings("error")
+set_languages("c++17")
+-- set_warnings("error")
+--set_symbols("debug")    -- dbg symbols
+add_rules("mode.debug", "mode.release")
+set_policy("check.auto_ignore_flags", false)
+
+-- add_cxflags("-xc++ -lstdc++ -shared-libgcc")
 
 add_includedirs("3rd/coost/include")
 add_includedirs("3rd/nlohmann_json/include")

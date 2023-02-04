@@ -4,7 +4,9 @@
 
 #pragma once
 
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <deque>
 #include <iostream>
@@ -111,6 +113,7 @@ using Deque = std::deque<T>;
 }  // namespace gx
 
 ////////////////////////////////////////////////////////////////////////////////
+#ifndef _WIN32
 #if __cplusplus < 201402L  // < C++14
 namespace std {
 template <typename T, typename... Args>
@@ -118,7 +121,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 }  // namespace std
-#endif
+#endif // __cplusplus < 201402L
+#endif // _WIN32
 
 namespace gx {
 // NewRef ...

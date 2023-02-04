@@ -6,7 +6,9 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <sstream>
 #include <string>
 

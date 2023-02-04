@@ -407,6 +407,7 @@ string Replace(const string& s, const string& olds, const string& news, int n) {
 
 // asciiSpace ...
 static uint8 asciiSpace[256];
+#ifndef _WIN32
 static auto _init_asciiSpace = [] {
     memset(asciiSpace, 0, sizeof(asciiSpace));
     const byte s[] = "\t\n\v\f\r ";
@@ -415,6 +416,7 @@ static auto _init_asciiSpace = [] {
     }
     return true;
 }();
+#endif
 
 // Fields splits the string s around each instance of one or more consecutive white space
 // characters, as defined by unicode.IsSpace, returning a slice of substrings of s or an

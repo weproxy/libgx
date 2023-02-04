@@ -54,12 +54,12 @@ struct slice {
         return *this;
     }
 
-    // operator =
-    slice& operator=(slice&& r) {
-        assign(r);
-        r._reset();
-        return *this;
-    }
+    // // operator =
+    // slice& operator=(slice&& r) {
+    //     assign(r);
+    //     r._reset();
+    //     return *this;
+    // }
 
     // bool() ...
     operator bool() const { return !!p_; }
@@ -76,36 +76,38 @@ struct slice {
     operator T*() { return data(); }
     operator const T*() const { return data(); }
 
+#if 1
    public:  // for slice<byte> <--> string
-    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
-    slice<X>(string&& s) : slice<X>(s.length(), s.length() + 1) {
+    // template <typename X = byte, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    slice<T>(string&& s) : slice<T>(s.length(), s.length() + 1) {
         memcpy(data(), s.data(), s.length());
         this->operator[](len_) = 0;
     }
 
-    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
-    slice<X>(const string& s) : slice<X>(s.length(), s.length() + 1) {
+    // template <typename X = byte, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    slice<T>(const string& s) : slice<T>(s.length(), s.length() + 1) {
         memcpy(data(), s.data(), s.length());
         this->operator[](len_) = 0;
     }
 
-    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
-    slice<X>(const char* s) : slice<X>((s && s[0]) ? strlen(s) : 0, (s && s[0]) ? (strlen(s) + 1) : 1) {
+    // template <typename X = byte, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    slice<T>(const char* s) : slice<T>((s && s[0]) ? strlen(s) : 0, (s && s[0]) ? (strlen(s) + 1) : 1) {
         if (s && s[0]) {
             memcpy(data(), s, strlen(s));
         }
         this->operator[](len_) = 0;
     }
 
-    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    // template <typename X = byte, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
     operator string() {
         return string((char*)data(), len_ * sizeof(T));
     }
 
-    template <typename X = T, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
+    template <typename X = byte, typename std::enable_if<xx::is_same<X, gx::byte>::value, int>::type = 0>
     operator string() const {
         return string((char*)data(), len_ * sizeof(T));
     }
+#endif
 
    public:
     // String ...
@@ -276,14 +278,14 @@ inline int copy(bytez<>& dst, const string& src) {
     return i;
 }
 
-// copy ...
-inline int copy(bytez<>&& dst, const string& src) {
-    int i = 0;
-    for (; i < len(dst) && i < len(src); i++) {
-        dst[i] = src[i];
-    }
-    return i;
-}
+// // copy ...
+// inline int copy(bytez<>&& dst, const string& src) {
+//     int i = 0;
+//     for (; i < len(dst) && i < len(src); i++) {
+//         dst[i] = src[i];
+//     }
+//     return i;
+// }
 
 // copy ...
 template <typename T = byte>

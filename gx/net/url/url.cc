@@ -252,7 +252,7 @@ R<Values, error> ParseQuery(const string& query) {
     return {m, err};
 }
 
-// Encode encodes the values into “URL encoded” form
+// Encode encodes the values into 鈥淯RL encoded鈥� form
 // ("bar=baz&foo=quux") sorted by key.
 string Values::Encode() const {
     if (!map_) {

@@ -73,7 +73,7 @@ struct Values {
         return ok;
     }
 
-    // Encode encodes the values into ‚ÄúURL encoded‚Äù form
+    // Encode encodes the values into °∞URL encoded°± form
     // ("bar=baz&foo=quux") sorted by key.
     string Encode() const;
 };

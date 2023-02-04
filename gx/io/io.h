@@ -197,12 +197,12 @@ struct discard_t {
             n += int64(nr);
             if (er != nil) {
                 if (er == ErrEOF) {
-                    return {n, nil};
+                    return {int(n), nil};
                 }
-                return {n, er};
+                return {int(n), er};
             }
         }
-        return {n, nil};
+        return {int(n), nil};
     }
 };
 }  // namespace xx

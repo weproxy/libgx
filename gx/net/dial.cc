@@ -88,7 +88,7 @@ struct tcpConn_t : public conn_t {
         return nil;
     }
 
-    virtual int Fd() const override { return fd_; }
+    virtual SOCKET Fd() const override { return fd_; }
     virtual Addr LocalAddr() const override { return xx::GetSockAddr(fd_); }
     virtual Addr RemoteAddr() const override { return xx::GetPeerAddr(fd_); }
     virtual string String() const override { return GX_SS("tcpConn_t{" << RemoteAddr() << "}"); }

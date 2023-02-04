@@ -24,9 +24,7 @@ struct Builder {
     int Len() const { return len(buf); }
     int Cap() const { return cap(buf); }
 
-    void Reset() {
-        buf._reset();
-    }
+    void Reset() { buf._reset(); }
 
     void Grow(int n) {
         if (cap(buf) - len(buf) < n) {

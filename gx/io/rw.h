@@ -427,21 +427,21 @@ ReadWriteCloser NewReadWriteCloser(T t) {
 // updates N to reflect the new amount remaining.
 // Read returns EOF when N <= 0 or when the underlying R returns EOF.
 struct LimitedReader : public xx::reader_t {
-    Reader R;    // underlying reader
-    int64 N{0};  // max bytes remaining
+    Reader R_;    // underlying reader
+    int64 N_{0};  // max bytes remaining
 
-    LimitedReader(Reader r, int64 n) : R(r), N(n) {}
+    LimitedReader(Reader r, int64 n) : R_(r), N_(n) {}
 
     // Read ...
     virtual gx::R<int, error> Read(bytez<> p) override {
-        if (N <= 0) {
+        if (N_ <= 0) {
             return {0, ErrEOF};
         }
-        if (int64(len(p)) > N) {
-            p = p(0, N);
+        if (int64(len(p)) > N_) {
+            p = p(0, N_);
         }
-        AUTO_R(n, err, R->Read(p));
-        N -= int64(n);
+        AUTO_R(n, err, R_->Read(p));
+        N_ -= int64(n);
         return {n, err};
     }
 };

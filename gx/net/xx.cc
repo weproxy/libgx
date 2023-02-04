@@ -35,10 +35,12 @@ Addr ToAddr(const AddrIn& addr) {
         byte* p = (byte*)&addr.v4.sin_addr.s_addr;
         ip = IP(bytez<>{p[0], p[1], p[2], p[3]});
         port = ntoh16(addr.v4.sin_port);
+#ifndef _WIN32        
     } else if (addr.v6.sin6_family == AF_INET6) {
         ip.B = make(IPv6len);
-        copy(ip.B, &addr.v6.sin6_addr.__u6_addr, IPv6len);
+        memcpy(ip.B, &addr.v6.sin6_addr.__u6_addr, IPv6len);
         port = ntoh16(addr.v6.sin6_port);
+#endif        
     }
     return MakeAddr(ip, port);
 }
@@ -49,18 +51,20 @@ R<AddrIn, int> FromAddr(Addr addr) {
     memset(&ain, 0, sizeof(ain));
 
     auto ip4 = addr->IP.To4();
-    if (ip4) {
+    // if (ip4) {
         ain.v4.sin_family = AF_INET;
         memcpy(&ain.v4.sin_addr.s_addr, ip4.B.data(), IPv4len);
         ain.v4.sin_port = hton16(addr->Port);
-        return {ain, sizeof(ain.v4)};
+        return {ain, int(sizeof(ain.v4))};
+#ifndef _WIN32        
     } else {
         auto ip6 = addr->IP.To16();
         ain.v4.sin_family = AF_INET6;
         memcpy(&ain.v6.sin6_addr.__u6_addr, ip6.B.data(), IPv6len);
         ain.v6.sin6_port = hton16(addr->Port);
         return {ain, sizeof(ain.v6)};
-    }
+#endif        
+    // }
 }
 
 // GetAddrInfo ...

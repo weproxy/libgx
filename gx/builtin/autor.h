@@ -36,7 +36,7 @@ R<T...> MakeR(T&&... args) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // for AUTO_R(...)
-#if __cplusplus >= 201703L  // >= C++17
+#if 1 //&& __cplusplus >= 201703L  // >= C++17
 #define _GXR_AUTO1(v1, r, x) auto [v1] = r
 #define _GXR_AUTO2(v1, v2, r, x) auto [v1, v2] = r
 #define _GXR_AUTO3(v1, v2, v3, r, x) auto [v1, v2, v3] = r
@@ -76,9 +76,9 @@ R<T...> MakeR(T&&... args) {
 ////////////////////////////////////////////////////////////////////////////////
 //
 #define AUTO_R(...)                                                                                            \
-    _GX_EXPAND(_GXR_MACRO(__VA_ARGS__, _GXR_AUTO8, _GXR_AUTO7, _GXR_AUTO6, _GXR_AUTO5, _GXR_AUTO4, _GXR_AUTO3, \
+    _GX_EXPAND(_GX_EXPAND(_GXR_MACRO(__VA_ARGS__, _GXR_AUTO8, _GXR_AUTO7, _GXR_AUTO6, _GXR_AUTO5, _GXR_AUTO4, _GXR_AUTO3, \
                           _GXR_AUTO2, _GXR_AUTO1))                                                             \
-    (__VA_ARGS__, _GX_CAT(__x__, __LINE__))
+    (__VA_ARGS__, _GX_CAT(__x__, __LINE__)))
 
 ////////////////////////////////////////////////////////////////////////////////
 //

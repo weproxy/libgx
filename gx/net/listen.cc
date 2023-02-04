@@ -224,7 +224,7 @@ struct udpConn_t : public packetConn_t {
         return nil;
     }
 
-    virtual int Fd() const override { return fd_; }
+    virtual SOCKET Fd() const override { return fd_; }
     virtual string String() const override { return "udpConn_t"; }
 
    private:
