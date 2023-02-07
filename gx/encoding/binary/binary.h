@@ -31,6 +31,7 @@ struct AppendByteOrder {
     virtual string String() const { return "AppendByteOrder"; }
 };
 
+namespace xx {
 // littleEndian ...
 struct littleEndian : public ByteOrder, public AppendByteOrder {
     // String ...
@@ -138,14 +139,15 @@ struct bigEndian : public ByteOrder, public AppendByteOrder {
                       byte(v >> 8), byte(v));
     }
 };
+} // namespace xx
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 // LittleEndian is the little-endian implementation of ByteOrder and AppendByteOrder.
-extern littleEndian LittleEndian;
+extern xx::littleEndian LittleEndian;
 
 // BigEndian is the big-endian implementation of ByteOrder and AppendByteOrder.
-extern bigEndian BigEndian;
+extern xx::bigEndian BigEndian;
 
 }  // namespace binary
 }  // namespace gx

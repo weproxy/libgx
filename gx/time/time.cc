@@ -63,6 +63,10 @@ Time Now() {
     struct timespec t;
     #ifndef _WIN32
     clock_gettime(CLOCK_MONOTONIC, &t);
+    #else
+    int64 usec = now::us();
+    t.tv_sec = usec / 1000000;
+    t.tv_nsec = usec - t.tv_sec * 1000000;
     #endif
     return Time(t);
 }

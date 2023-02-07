@@ -36,7 +36,7 @@ R<T...> MakeR(T&&... args) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // for AUTO_R(...)
-#if 1 //&& __cplusplus >= 201703L  // >= C++17
+#if __cplusplus >= 201703L  // >= C++17
 #define _GXR_AUTO1(v1, r, x) auto [v1] = r
 #define _GXR_AUTO2(v1, v2, r, x) auto [v1, v2] = r
 #define _GXR_AUTO3(v1, v2, v3, r, x) auto [v1, v2, v3] = r

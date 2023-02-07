@@ -51,7 +51,7 @@ R<AddrIn, int> FromAddr(Addr addr) {
     memset(&ain, 0, sizeof(ain));
 
     auto ip4 = addr->IP.To4();
-    // if (ip4) {
+    if (ip4) {
         ain.v4.sin_family = AF_INET;
         memcpy(&ain.v4.sin_addr.s_addr, ip4.B.data(), IPv4len);
         ain.v4.sin_port = hton16(addr->Port);
@@ -64,7 +64,8 @@ R<AddrIn, int> FromAddr(Addr addr) {
         ain.v6.sin6_port = hton16(addr->Port);
         return {ain, sizeof(ain.v6)};
 #endif        
-    // }
+    }
+    return {ain, 0};
 }
 
 // GetAddrInfo ...

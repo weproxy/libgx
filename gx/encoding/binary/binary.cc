@@ -13,10 +13,10 @@ error overflow = errors::New("binary: varint overflows a 64-bit integer");
 ////////////////////////////////////////////////////////////////////////////////
 //
 // LittleEndian is the little-endian implementation of ByteOrder and AppendByteOrder.
-littleEndian LittleEndian;
+xx::littleEndian LittleEndian;
 
 // BigEndian is the big-endian implementation of ByteOrder and AppendByteOrder.
-bigEndian BigEndian;
+xx::bigEndian BigEndian;
 
 }  // namespace binary
 }  // namespace gx

@@ -12,7 +12,7 @@ set_project("gx")
 set_xmakever("2.3.1")
 
 -- set common flags
-set_languages("c++17")
+set_languages("c++11")
 -- set_warnings("error")
 --set_symbols("debug")    -- dbg symbols
 add_rules("mode.debug", "mode.release")

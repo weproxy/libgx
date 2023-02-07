@@ -278,14 +278,16 @@ inline int copy(bytez<>& dst, const string& src) {
     return i;
 }
 
-// // copy ...
-// inline int copy(bytez<>&& dst, const string& src) {
-//     int i = 0;
-//     for (; i < len(dst) && i < len(src); i++) {
-//         dst[i] = src[i];
-//     }
-//     return i;
-// }
+#ifndef _WIN32
+// copy ...
+inline int copy(bytez<>&& dst, const string& src) {
+    int i = 0;
+    for (; i < len(dst) && i < len(src); i++) {
+        dst[i] = src[i];
+    }
+    return i;
+}
+#endif
 
 // copy ...
 template <typename T = byte>

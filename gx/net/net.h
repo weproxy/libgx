@@ -10,15 +10,15 @@
 #include "gx/time/time.h"
 #include "ip.h"
 
-namespace gx {
-namespace net {
-
 #ifndef _WIN32
 #ifndef SOCKET
 typedef int SOCKET;
-#endif
+#endif // SOCKET
 #define INVALID_SOCKET -1
-#endif
+#endif // _WIN32
+
+namespace gx {
+namespace net {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
